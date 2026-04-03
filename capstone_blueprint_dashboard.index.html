@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capstone Blueprint — Daniel Quansah</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1714;
+    --ink-light: #5A5550;
+    --ink-faint: #9A9590;
+    --rule: #DDD8D0;
+    --purple: #5B4FD9;
+    --purple-light: #EAE8FA;
+    --teal: #1A9E75;
+    --teal-light: #E0F5ED;
+    --coral: #C94F2A;
+    --coral-light: #FAE8E2;
+    --amber: #B06A10;
+    --amber-light: #FAF0E0;
+    --blue: #2068B0;
+    --blue-light: #E5F0FA;
+    --pink: #B03570;
+    --pink-light: #FAE5EF;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,240,232,0.08);
+  }
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,240,232,0.05);
+  }
+  .header-inner { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: rgba(245,240,232,0.3);
+  }
+  .header-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+  .header-title em {
+    font-style: italic;
+    color: rgba(245,240,232,0.7);
+  }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(245,240,232,0.55);
+    max-width: 560px;
+    margin-bottom: 2rem;
+    line-height: 1.65;
+  }
+  .header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .meta-pill {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(245,240,232,0.15);
+    color: rgba(245,240,232,0.7);
+    background: rgba(245,240,232,0.06);
+  }
+
+  /* ── NAV TABS ── */
+  .nav-bar {
+    background: white;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 1rem 1.25rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .nav-btn:hover { color: var(--ink); }
+  .nav-btn.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* ── MAIN CONTENT ── */
+  .main { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+  .panel { display: none; animation: fadeIn 0.25s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-intro {
+    font-size: 14px;
+    color: var(--ink-light);
+    max-width: 640px;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  /* ── ASSESSMENT CARDS ── */
+  .verdict-grid { display: flex; flex-direction: column; gap: 1rem; }
+  .verdict-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+  .verdict-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 0.9rem;
+  }
+  .v-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; font-weight: 600;
+  }
+  .v-green { background: var(--green-light); color: var(--green); }
+  .v-amber { background: var(--amber-light); color: var(--amber); }
+  .v-blue { background: var(--blue-light); color: var(--blue); }
+  .v-title { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .v-body { font-size: 14px; color: var(--ink-light); line-height: 1.7; }
+  .rename-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .old { color: var(--ink-faint); text-decoration: line-through; }
+  .arr { color: var(--ink-faint); }
+  .nw { color: var(--teal); font-weight: 600; }
+
+  /* ── CHAPTER CARDS ── */
+  .chapter-list { display: flex; flex-direction: column; gap: 0.85rem; }
+  .ch-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .ch-trigger {
+    display: flex; align-items: stretch;
+    cursor: pointer; width: 100%; text-align: left;
+    background: none; border: none; font-family: var(--font-body);
+  }
+  .ch-trigger:hover .ch-title-block { background: rgba(0,0,0,0.01); }
+  .ch-bar { width: 6px; flex-shrink: 0; }
+  .ch-title-block { flex: 1; padding: 1.1rem 1.25rem; }
+  .ch-eyebrow {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-faint); margin-bottom: 3px;
+  }
+  .ch-name {
+    font-size: 15px; font-weight: 600;
+    color: var(--ink); margin-bottom: 3px; line-height: 1.35;
+  }
+  .ch-job {
+    font-size: 13px; color: var(--ink-light);
+    font-style: italic; line-height: 1.5;
+  }
+  .ch-right {
+    display: flex; align-items: center;
+    gap: 10px; padding: 0 1.25rem; flex-shrink: 0;
+  }
+  .wc-pill {
+    font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .chevron-icon {
+    font-size: 12px; color: var(--ink-faint);
+    transition: transform 0.2s;
+  }
+  .chevron-icon.open { transform: rotate(180deg); }
+
+  .ch-body {
+    display: none;
+    border-top: 1px solid var(--rule);
+    padding: 1.5rem;
+    background: #FAFAF8;
+  }
+  .ch-body.open { display: block; }
+
+  .ch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media(max-width: 640px) { .ch-grid { grid-template-columns: 1fr; } }
+
+  .info-block {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+  }
+  .ib-label {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-faint); margin-bottom: 8px;
+  }
+  .ib-text { font-size: 13px; line-height: 1.65; color: var(--ink-light); }
+
+  .outline-ol { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .outline-ol li { display: flex; gap: 9px; font-size: 13px; line-height: 1.55; color: var(--ink-light); }
+  .o-num {
+    min-width: 20px; height: 20px; border-radius: 50%;
+    background: var(--cream); border: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: var(--ink-faint);
+    flex-shrink: 0; margin-top: 2px;
+  }
+
+  .scaffold-block {
+    grid-column: 1 / -1;
+    background: var(--blue-light);
+    border: 1px solid #C5DCEF;
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+  }
+  .scaffold-label {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--blue); margin-bottom: 6px;
+  }
+  .scaffold-text { font-size: 13px; line-height: 1.65; color: #1A4A7A; }
+
+  /* ── WORD COUNT ── */
+  .wc-section { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .wc-row { display: flex; align-items: center; gap: 12px; }
+  .wc-label { font-size: 13px; color: var(--ink-light); width: 200px; flex-shrink: 0; }
+  .wc-track { flex: 1; height: 8px; background: var(--rule); border-radius: 4px; overflow: hidden; }
+  .wc-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .wc-val { font-size: 13px; font-weight: 600; color: var(--ink); min-width: 60px; text-align: right; }
+  .wc-total {
+    font-size: 13px; text-align: right;
+    color: var(--ink-faint); padding-top: 0.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .wc-note {
+    background: white; border: 1px solid var(--rule);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+    font-size: 13px; line-height: 1.7; color: var(--ink-light);
+  }
+
+  /* ── PITFALLS ── */
+  .pitfall-list { display: flex; flex-direction: column; gap: 1rem; }
+  .pitfall-card {
+    background: white; border: 1px solid var(--rule);
+    border-radius: var(--radius); padding: 1.5rem;
+  }
+  .p-num {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-faint); margin-bottom: 4px;
+  }
+  .p-name { font-size: 16px; font-weight: 600; margin-bottom: 0.75rem; }
+  .p-body { font-size: 14px; line-height: 1.7; color: var(--ink-light); margin-bottom: 1rem; }
+  .fix-box {
+    background: var(--teal-light);
+    border: 1px solid #A8D8C5;
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+  }
+  .fix-label {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--teal); margin-bottom: 5px;
+  }
+  .fix-text { font-size: 13px; line-height: 1.65; color: #0A4A35; }
+
+  /* ── CURRICULUM SECTION ── */
+  .curriculum-card {
+    background: white; border: 1px solid var(--rule);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 0.85rem;
+  }
+  .cur-trigger {
+    display: flex; align-items: stretch;
+    cursor: pointer; width: 100%; text-align: left;
+    background: none; border: none; font-family: var(--font-body);
+  }
+  .cur-bar { width: 6px; flex-shrink: 0; }
+  .cur-inner { flex: 1; padding: 1rem 1.1rem; }
+  .cur-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); margin-bottom: 2px; }
+  .cur-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .cur-tag { font-size: 12px; color: var(--ink-light); font-style: italic; }
+  .cur-right { display: flex; align-items: center; gap: 8px; padding: 0 1.1rem; flex-shrink: 0; }
+  .dur-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+  .cur-body { display: none; border-top: 1px solid var(--rule); padding: 1.25rem; background: #FAFAF8; }
+  .cur-body.open { display: block; }
+  .cur-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width:600px) { .cur-grid { grid-template-columns: 1fr; } }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag-pill {
+    font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    background: var(--cream); border: 1px solid var(--rule);
+    color: var(--ink-light);
+  }
+  .tag-pill.on { background: var(--purple-light); color: var(--purple); border-color: transparent; font-weight: 600; }
+  .tag-pill.on-teal { background: var(--teal-light); color: var(--teal); border-color: transparent; font-weight: 600; }
+
+  .del-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .del-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .del-sync { background: var(--purple-light); color: var(--purple); }
+  .del-async { background: var(--teal-light); color: var(--teal); }
+  .del-person { background: var(--amber-light); color: var(--amber); }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--ink); color: rgba(245,240,232,0.4);
+    padding: 2rem; text-align: center; font-size: 12px;
+  }
+
+  /* ── UTILITY ── */
+  @media(max-width: 600px) {
+    .site-header { padding: 2rem 1.25rem 2rem; }
+    .main { padding: 1.5rem 1.25rem 3rem; }
+    .nav-inner { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-eyebrow">Master's Capstone · Bard College · Global Studies</div>
+    <h1 class="header-title">AI for Urban Resilience<br><em>Research & Curriculum Blueprint</em></h1>
+    <p class="header-sub">A scholar-practitioner framework for designing, documenting, and scaling an AI training curriculum for immigrant-owned small businesses — developed through the NYS EAC Program with Welcome to Chinatown.</p>
+    <div class="header-meta">
+      <span class="meta-pill">Daniel Quansah</span>
+      <span class="meta-pill">400+ MSMEs · 25 EACs · New York State</span>
+      <span class="meta-pill">Kolb · Fink · Andragogy</span>
+      <span class="meta-pill">7,500-word companion document</span>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="switchTab('assess')">Structural assessment</button>
+    <button class="nav-btn" onclick="switchTab('blueprint')">Chapter blueprint</button>
+    <button class="nav-btn" onclick="switchTab('wc')">Word count map</button>
+    <button class="nav-btn" onclick="switchTab('pitfalls')">Pitfalls to avoid</button>
+    <button class="nav-btn" onclick="switchTab('curriculum')">Curriculum scope &amp; sequence</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ═══ ASSESSMENT ═══ -->
+  <div class="panel active" id="panel-assess">
+    <p class="section-intro">A direct critical assessment of your proposed chapter arc — what's working, what needs to be reframed, and one essential addition your committee will expect.</p>
+    <div class="verdict-grid">
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <div class="v-icon v-green">✓</div>
+          <div class="v-title">Overall arc: sound, with one critical fix needed</div>
+        </div>
+        <p class="v-body">Your instinct to move from problem → theory → programs → pedagogy → recommendations → reflection is correct for a practice-based capstone. The arc mirrors how a thoughtful practitioner actually reasons — from "here's the problem" to "here's what we know" to "here's how I built something" to "here's what others should do." That is the right logic. However, one structural issue runs through the whole document: the curriculum design and its pedagogical rationale are currently framed as a separate chapter that follows the contextual material, when they should be the throughline the entire document is written toward. Everything before it should be explicitly building the case for why this curriculum is designed the way it is.</p>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <div class="v-icon v-amber">!</div>
+          <div class="v-title">The "literature review" chapter: rename and reframe it</div>
+        </div>
+        <p class="v-body">Your instinct to move away from a traditional literature review is exactly right for this document type. A traditional lit review catalogues what others have said. What you need is an analytical chapter that makes an argument — specifically, that the existing landscape of theory and programs reveals a clear gap that your project fills. The theory of change belongs at the end of this chapter as its conclusion, not as an embedded section — it should land as the "therefore" that follows from everything you've just established.</p>
+        <div class="rename-row">
+          <span class="old">Literature review</span>
+          <span class="arr">→</span>
+          <span class="nw">"Theoretical grounding and programmatic landscape: what we know and what's missing"</span>
+        </div>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <div class="v-icon v-amber">!</div>
+          <div class="v-title">The pedagogy chapter: it needs a stronger justificatory spine</div>
+        </div>
+        <p class="v-body">As currently conceived, this chapter risks reading as a textbook summary of Kolb, Fink, and andragogy rather than a design argument. The question is never "what are these frameworks?" but always "why these frameworks for this population, in this context, at this moment?" Every framework must be explicitly connected to a specific characteristic of your target learners (immigrant-owned MSMEs, low digital literacy, time-constrained adult entrepreneurs) or a specific constraint of your delivery context (EAC infrastructure, blended format, multilingual needs).</p>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <div class="v-icon v-green">✓</div>
+          <div class="v-title">The reflective component: keep it, but give it scholarly framing</div>
+        </div>
+        <p class="v-body">The learning log and practitioner reflection are methodologically significant in a practice-based capstone — they demonstrate epistemic humility, document positionality, and show that you understand the difference between implementing a program and researching it. Ground it in scholar-practitioner methodology — cite Donald Schön's reflective practitioner framework — so it reads as a legitimate research method, not an afterthought.</p>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <div class="v-icon v-blue">+</div>
+          <div class="v-title">One addition recommended: a methodological note (~300 words)</div>
+        </div>
+        <p class="v-body">Your document currently has no section that explains how you conducted this research — what sources you drew on, how you selected the program examples you analyze, and what your positionality is as both researcher and practitioner embedded in the EAC program. Without this, an academic committee will flag it. A 300-word methodological note at the end of your introduction will suffice. It also signals methodological sophistication to funders who want to know this was rigorous, not anecdotal.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ BLUEPRINT ═══ -->
+  <div class="panel" id="panel-blueprint">
+    <p class="section-intro">Click any chapter to expand the detailed outline, section-by-section breakdown, and the specific scaffolding strategy. Each chapter has a clear "job" it must do within the overall document.</p>
+    <div class="chapter-list" id="chapter-list"></div>
+  </div>
+
+  <!-- ═══ WORD COUNT ═══ -->
+  <div class="panel" id="panel-wc">
+    <p class="section-intro">How to distribute 7,500 words across five chapters and an appendix. Chapters 2 and 3 carry the most academic weight — that distribution is intentional.</p>
+    <div class="wc-section" id="wc-bars"></div>
+    <div class="wc-note">
+      The two heaviest chapters — theoretical grounding (Ch. 2, 2,200 words) and pedagogical design (Ch. 3, 2,000 words) — carry the most academic weight and justify the most space. Together they account for 56% of the document, which is appropriate: this is where your scholarly credibility lives and where funders look for rigor. The recommendations chapter (Ch. 4) is intentionally shorter but must be dense with specifics. The reflective epilogue is lean by design — its value is in quality of insight, not volume.
+    </div>
+  </div>
+
+  <!-- ═══ PITFALLS ═══ -->
+  <div class="panel" id="panel-pitfalls">
+    <p class="section-intro">The three most common structural failures in scholar-practitioner capstones — with specific fixes tailored to your document and context.</p>
+    <div class="pitfall-list">
+
+      <div class="pitfall-card">
+        <div class="p-num">Pitfall 1</div>
+        <div class="p-name">Describing frameworks instead of deploying them</div>
+        <p class="p-body">The most common failure is devoting large amounts of space to explaining what Kolb's cycle is, what andragogy means, or what the political economy of technology argues — and then never using those frameworks to make an original analytical move. The document becomes a textbook summary rather than a piece of scholarly-practitioner reasoning. Readers who know these frameworks are bored; readers who don't are left wondering why they matter.</p>
+        <div class="fix-box">
+          <div class="fix-label">How to avoid it in your document</div>
+          <p class="fix-text">Adopt a strict rule: every framework gets no more than one short paragraph of definition, followed immediately by a sentence that begins "In the context of immigrant-owned MSMEs in the EAC program, this means..." If you cannot write that sentence, you are not ready to include the framework. Apply this test in every chapter.</p>
+        </div>
+      </div>
+
+      <div class="pitfall-card">
+        <div class="p-num">Pitfall 2</div>
+        <div class="p-name">The program review that stays descriptive</div>
+        <p class="p-body">When scholar-practitioners review comparable programs — Google's B(AI)sics, SBA initiatives, community college digital equity programs — they frequently describe what each program does without making a comparative argument. The result is a list of programs with no analytical payoff. Your analysis of the Google/Chamber program is one of the most intellectually sharp moments in your current draft — you identify the platform dependency problem and the equity gap — but that critical lens needs to be applied consistently across all program examples, not just one.</p>
+        <div class="fix-box">
+          <div class="fix-label">How to avoid it in your document</div>
+          <p class="fix-text">Build a simple evaluative matrix — three to four criteria drawn directly from your research objectives (equity by design, tool-agnosticism, scalability, community embeddedness) — and run every program example through it. This transforms description into analysis and makes the gap your project fills visible and defensible. The matrix can appear as a figure in the document.</p>
+        </div>
+      </div>
+
+      <div class="pitfall-card">
+        <div class="p-num">Pitfall 3</div>
+        <div class="p-name">Recommendations that are too abstract to act on</div>
+        <p class="p-body">Capstone recommendations chapters frequently end with calls to action that are simultaneously obvious and impossible to operationalize: "policymakers should invest in digital equity," "future researchers should examine long-term outcomes," "programs should be culturally responsive." These statements are true but useless. They signal that the author ran out of analytical energy in the final chapter, which is precisely where funders and senior practitioners are most closely reading.</p>
+        <div class="fix-box">
+          <div class="fix-label">How to avoid it in your document</div>
+          <p class="fix-text">For each recommendation, answer three questions: Who specifically should do this (ESD, SBA, city EDC, EAC coordinators)? What specifically should they do differently from what they do now? What would success look like in 18 months? If you cannot answer all three, the recommendation is not ready to write. Aim for five to seven recommendations with this level of specificity rather than ten that are vague.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CURRICULUM ═══ -->
+  <div class="panel" id="panel-curriculum">
+    <p class="section-intro">The full 6-module curriculum scope and sequence — grounded in Kolb's Experiential Learning Cycle and Fink's Taxonomy of Significant Learning. Click any module to expand.</p>
+    <div id="curriculum-list"></div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  Daniel Quansah · Bard College Master's Capstone · AI for Urban Resilience · NYS EAC Program with Welcome to Chinatown
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+
+const CHAPTERS = [
+  {
+    color: "#5B4FD9", badge: { bg: "#EAE8FA", color: "#5B4FD9" },
+    num: "Chapter 1", title: "Introduction: AI at the urban frontier",
+    job: "Establish the problem, the stakes, your positionality, and the document's argument in one sustained move.",
+    words: 900,
+    outline: [
+      "Open with a concrete scene or data point that makes the stakes visceral — not 'small businesses face challenges' but a specific Chinatown business owner confronting AI displacement or opportunity",
+      "Lay out the problem cascade: rapid urbanization → small business vulnerability → COVID disruption → AI as double-edged force → immigrant-owned MSMEs as most exposed",
+      "State your central research question and four research objectives clearly and directly",
+      "Introduce the EAC/Welcome to Chinatown context as the site of inquiry — establish your dual role as researcher and practitioner",
+      "Add a 300-word methodological note: how you conducted this research, your sources, your positionality, and why a practice-based capstone is the right form for this inquiry",
+      "Close with a signposting paragraph: 'This document proceeds as follows...' — one sentence per chapter that builds a cumulative argument, not just a table of contents"
+    ],
+    scaffold: "Use the 'funnel structure': open at the widest frame (global urbanization, AI transformation) and narrow progressively to your specific site (Chinatown, EAC program, this curriculum). This mirrors how funders and academics expect an argument to open — broad enough to matter, specific enough to trust."
+  },
+  {
+    color: "#1A9E75", badge: { bg: "#E0F5ED", color: "#1A9E75" },
+    num: "Chapter 2", title: "What we know and what's missing: theory, programs, and the case for this project",
+    job: "Build the intellectual and programmatic case that your project fills a specific, demonstrable gap — concluding with your theory of change as the 'therefore' of everything that precedes it.",
+    words: 2200,
+    outline: [
+      "SECTION A — Theoretical foundations (600 words): Introduce the political economy of technology lens (Autor, Winner, Jasanoff) as the master framework. Layer in Digital Divide Theory and AI equity governance literature. Goal: establish that how technology benefits are distributed is a political and institutional question, not just a technical one.",
+      "SECTION B — Programmatic landscape (900 words): Analyze 3–4 exemplary programs using a consistent evaluative matrix (equity by design, tool-agnosticism, scalability, community embeddedness). Include Google/Chamber B(AI)sics, SBA resources, and at least one place-based community program. Apply critical analysis consistently across all examples.",
+      "SECTION C — What's missing (300 words): Synthesize the gap. What does the literature theorize but programs fail to operationalize? What do programs do well but lack the scholarly grounding to explain? This is where your project's contribution becomes explicit.",
+      "SECTION D — Theory of change (400 words): Present your theory of change as the logical conclusion of everything above. Frame it as: given what theory tells us about AI equity, and given what successful programs show us about implementation, here is the causal pathway your curriculum is designed to activate. Include a visual logic model if possible."
+    ],
+    scaffold: "Use 'analytical layering': each section answers a different question about the same problem. Section A answers 'what do we know theoretically?' Section B answers 'what have practitioners tried?' Section C answers 'where is the gap?' Section D answers 'what is my response?' This makes it read as a cumulative argument, not a catalogue."
+  },
+  {
+    color: "#C94F2A", badge: { bg: "#FAE8E2", color: "#C94F2A" },
+    num: "Chapter 3", title: "Designing for transformation: pedagogical framework and curriculum architecture",
+    job: "Justify every major design decision in the curriculum by connecting it explicitly to your learner population, delivery context, and theory of change.",
+    words: 2000,
+    outline: [
+      "Open with a design premise: state clearly that the curriculum is a transformation pathway — every pedagogical choice reflects a specific understanding of who your learners are and what they need",
+      "SECTION A — Who the learners are (400 words): Characterize your target population through an andragogical lens — adult learners, experience-rich but time-poor, motivation tied to immediate relevance, prior negative experiences with technology as a potential barrier. Use EAC survey/interview data here if available.",
+      "SECTION B — Why Kolb (400 words): Explain the Experiential Learning Cycle as a design blueprint. Show how each of the six curriculum modules maps to specific stages of the cycle. Argue that for this population, beginning with concrete experience (not definitions) is non-negotiable.",
+      "SECTION C — Why Fink (400 words): Introduce Fink's Taxonomy as the aspirational framework — what you want learners to become, not just what you want them to know. Map the six dimensions to specific curriculum outcomes. Argue that 'caring' and 'human dimension' are especially critical for a population that approaches AI with skepticism.",
+      "SECTION D — Digital literacy models and blended delivery (400 words): Ground the scaffolded, task-based approach in digital literacy pedagogy. Explain the rationale for the blended format — why synchronous, asynchronous, and in-person components each play a distinct role for this population. Address the equity dimensions: multilingual materials, facilitator-guided options, cost-tiered tools.",
+      "Close with a curriculum overview (scope and sequence summary) — one paragraph tying all frameworks together into a coherent design argument"
+    ],
+    scaffold: "Use the 'learner-first' technique: introduce each framework by starting with a problem your learners face, then showing how the framework addresses it. 'Many participants arrive skeptical of AI after experiencing automation-related job loss — Fink's caring dimension addresses this directly by...' This keeps the chapter grounded in context rather than reading as a theory summary."
+  },
+  {
+    color: "#B06A10", badge: { bg: "#FAF0E0", color: "#B06A10" },
+    num: "Chapter 4", title: "From pilot to policy: recommendations for scaling and replication",
+    job: "Translate the lessons of your project into specific, actionable guidance for three distinct audiences — program designers, funders, and policymakers — targeting scale to other cities.",
+    words: 1500,
+    outline: [
+      "Open with a brief framing of what 'scaling' means in this context — not just growing participants but replicating the model's equity design and community embeddedness in new urban contexts",
+      "SECTION A — Programmatic recommendations (500 words): 3–4 recommendations for EAC coordinators, workforce development organizations, and community-based program designers. Each must specify who, what, and 18-month success indicators. Include: embed a workflow audit as the entry point; prioritize tool-agnostic curricula; build in facilitator training for equity scaffolding.",
+      "SECTION B — Policy recommendations (500 words): 3–4 recommendations for city EDCs, state workforce agencies (Empire State Development), and federal bodies (SBA, EDA). Focus on funding mechanisms, data infrastructure, and policy conditions that enable community-embedded AI training at scale.",
+      "SECTION C — Recommendations for future scholarly work (300 words): 2–3 specific research gaps this project surfaces. Be precise — not 'more research is needed' but 'a longitudinal study tracking firm-level revenue changes 12 months post-training across EAC cohorts would allow...'"
+    ],
+    scaffold: "Structure each recommendation using a 'problem → intervention → indicator' template. Name the specific gap or barrier, describe the recommended action, and specify one measurable indicator of success. This format is instantly readable by program officers reviewing grant applications."
+  },
+  {
+    color: "#2068B0", badge: { bg: "#E5F0FA", color: "#2068B0" },
+    num: "Chapter 5", title: "Reflective epilogue: learning in public",
+    job: "Demonstrate scholarly self-awareness, document your positionality, and model the kind of reflective practice your curriculum asks of its learners.",
+    words: 600,
+    outline: [
+      "Frame the reflection methodologically upfront — cite Schön's reflective practitioner or similar to establish this as a legitimate research method, not a personal diary",
+      "SECTION A — AI upskilling log (300 words): Chronicle your own journey learning and using AI tools throughout this research process. Be specific and honest — what surprised you, what frustrated you, what shifted your assumptions. This models exactly what you're asking of your MSME participants.",
+      "SECTION B — Practitioner partnership reflections (300 words): Reflect on what you learned working with Welcome to Chinatown that you could not have learned from the literature. What tensions arose between your researcher role and your practitioner role? What would you do differently?"
+    ],
+    scaffold: "Use the Kolb cycle as your reflective structure — Concrete Experience → Reflective Observation → Abstract Conceptualization → Active Experimentation. This demonstrates that you have internalized the framework you are teaching, which is exactly the scholarly-practitioner coherence a Bard committee will recognize and reward."
+  },
+  {
+    color: "#B03570", badge: { bg: "#FAE5EF", color: "#B03570" },
+    num: "Appendix", title: "Curriculum scope and sequence (reference document)",
+    job: "House the full curriculum table so the body chapters can reference it without reproducing it.",
+    words: 300,
+    outline: [
+      "Full 6-module scope and sequence table",
+      "Kolb stage and Fink dimension mappings per module",
+      "Delivery mode and equity notes per module",
+      "Assessment/reflection activity per module"
+    ],
+    scaffold: "Keep this lean and tabular. Its job is to be the evidence that Chapter 3's design claims are operationalized — not to re-argue anything. Cross-reference from Chapter 3 with: '(see Appendix A for full scope and sequence).'"
+  }
+];
+
+const WC_DATA = [
+  { label: "Ch. 1 — Introduction", words: 900, color: "#5B4FD9" },
+  { label: "Ch. 2 — Theory & programs", words: 2200, color: "#1A9E75" },
+  { label: "Ch. 3 — Pedagogy & design", words: 2000, color: "#C94F2A" },
+  { label: "Ch. 4 — Recommendations", words: 1500, color: "#B06A10" },
+  { label: "Ch. 5 — Reflection", words: 600, color: "#2068B0" },
+  { label: "Appendix", words: 300, color: "#B03570" }
+];
+
+const KOLB_ALL = ["Concrete experience","Reflective observation","Abstract conceptualization","Active experimentation"];
+const FINK_ALL = ["Foundational knowledge","Application","Integration","Human dimension","Caring","Learning how to learn"];
+
+const CURRICULUM = [
+  {
+    color: "#5B4FD9", badge: { bg: "#EAE8FA", color: "#5B4FD9" },
+    phase: "Phase 1 — Foundation", num: "Module 1",
+    name: "AI demystified: what it is and why it matters for your business",
+    tag: "Build foundational AI literacy grounded in real business challenges, not definitions.",
+    duration: "3–4 hrs", format: "Async + group workshop",
+    kolb: [0,1], fink: [0,4,5],
+    delivery: [{l:"Online async",c:"del-async"},{l:"Group workshop",c:"del-person"}],
+    lo: ["Explain what AI is in plain language and distinguish it from automation and software","Identify at least two ways AI is already affecting their industry or neighborhood","Articulate one personally relevant reason to engage with AI tools","Reflect on current relationship with technology and identify comfort/anxiety points"],
+    tools: "No tools required. Discussion prompts, video case studies, peer reflection logs.",
+    equity: "Materials available in Cantonese, Spanish, and Mandarin. Opens with WtC Chinatown case study for cultural relevance.",
+    assess: "Reflection log entry: 'What is one thing about AI that surprised you, and one thing you're still unsure about?'"
+  },
+  {
+    color: "#1A9E75", badge: { bg: "#E0F5ED", color: "#1A9E75" },
+    phase: "Phase 1 — Foundation", num: "Module 2",
+    name: "Mapping your workflow: where does AI fit in your business?",
+    tag: "Apply a structured workflow audit to identify high-value, low-risk AI entry points.",
+    duration: "3–4 hrs", format: "1-on-1 + async",
+    kolb: [0,1,2], fink: [0,1,2],
+    delivery: [{l:"1-on-1 session",c:"del-person"},{l:"Online async",c:"del-async"}],
+    lo: ["Map at least 5 core business tasks across marketing, operations, and customer service","Categorize tasks by repetitiveness, time cost, and AI-amenability","Identify one priority workflow domain for AI adoption in their specific business","Complete a Workflow Audit Template to use in Modules 3–5"],
+    tools: "Workflow Audit Template (provided). Optional: Notion, Google Sheets.",
+    equity: "Facilitator-guided 1-on-1 option for low-digital-literacy participants. Template available in simplified and full versions.",
+    assess: "Completed Workflow Audit Template with one identified priority domain and rationale."
+  },
+  {
+    color: "#C94F2A", badge: { bg: "#FAE8E2", color: "#C94F2A" },
+    phase: "Phase 2 — Application", num: "Module 3",
+    name: "AI for marketing: reaching more customers without more time",
+    tag: "Practice using AI tools for content creation, social media, and customer outreach.",
+    duration: "3–4 hrs", format: "Sync + in-person workshop",
+    kolb: [0,2,3], fink: [0,1,2,3],
+    delivery: [{l:"Live sync session",c:"del-sync"},{l:"In-person workshop",c:"del-person"}],
+    lo: ["Use an AI writing tool to draft a social media post or promotional email for their business","Evaluate AI-generated content for accuracy, tone, and cultural appropriateness","Identify one marketing workflow where AI saves measurable time or effort","Adapt AI output to reflect their brand voice and community context"],
+    tools: "ChatGPT / Claude (free tier), Canva AI, Google Gemini. Facilitator demo first, then guided practice.",
+    equity: "Multilingual prompt templates provided. Examples drawn from immigrant-owned business contexts. Peer pairing for tool-averse participants.",
+    assess: "Live practice: create one piece of marketing content using an AI tool. Group debrief: 'What worked? What needed editing? Why?'"
+  },
+  {
+    color: "#B06A10", badge: { bg: "#FAF0E0", color: "#B06A10" },
+    phase: "Phase 2 — Application", num: "Module 4",
+    name: "AI for operations: working smarter on the back end",
+    tag: "Explore AI tools that streamline scheduling, inventory, finance, and admin tasks.",
+    duration: "3–4 hrs", format: "Sync + 1-on-1",
+    kolb: [0,2,3], fink: [1,2,3,5],
+    delivery: [{l:"Live sync session",c:"del-sync"},{l:"1-on-1 coaching",c:"del-person"}],
+    lo: ["Identify at least one operational task that can be partially automated using a free or low-cost AI tool","Demonstrate use of one AI-powered tool for scheduling, invoicing, or inventory management","Calculate a rough time-savings estimate for their chosen operational use case","Design a simple adoption plan: tool + task + timeline"],
+    tools: "Notion AI, Google Workspace AI features, Wave (accounting), Calendly. Tool selection guided by participant's business type.",
+    equity: "Tool recommendations tiered by cost (free / freemium / paid). 1-on-1 coaching available for setup support.",
+    assess: "Adoption plan template: 'I will use [tool] to [task] by [date]. I expect this to save approximately [X hours/week].'"
+  },
+  {
+    color: "#2068B0", badge: { bg: "#E5F0FA", color: "#2068B0" },
+    phase: "Phase 2 — Application", num: "Module 5",
+    name: "AI for customer service: faster responses, stronger relationships",
+    tag: "Build confidence using AI tools to manage customer communication and feedback.",
+    duration: "3–4 hrs", format: "Sync + async",
+    kolb: [0,1,2,3], fink: [1,2,3,4],
+    delivery: [{l:"Live sync session",c:"del-sync"},{l:"Online async",c:"del-async"}],
+    lo: ["Draft an AI-assisted customer response template for a common inquiry or complaint","Evaluate the trade-offs between AI-assisted and human-led customer interaction","Set up or configure a basic chatbot or auto-reply workflow","Reflect on how AI use in customer service affects trust, tone, and cultural nuance"],
+    tools: "Tidio, ManyChat (free tier), Gmail templates + AI, Google Business reply tools.",
+    equity: "Discussion of cultural expectations around customer communication. Emphasis on AI as support, not replacement, for relationship-based business models.",
+    assess: "Peer review: exchange and critique each other's AI-drafted customer responses for tone, accuracy, and community appropriateness."
+  },
+  {
+    color: "#B03570", badge: { bg: "#FAE5EF", color: "#B03570" },
+    phase: "Phase 3 — Integration & Reflection", num: "Module 6",
+    name: "AI with intention: ethics, equity, and building your AI practice",
+    tag: "Integrate learning across modules, address ethical dimensions, and build a personal AI adoption roadmap.",
+    duration: "3–4 hrs", format: "Group workshop + async",
+    kolb: [1,2,3], fink: [2,3,4,5],
+    delivery: [{l:"Group workshop",c:"del-person"},{l:"Online async",c:"del-async"}],
+    lo: ["Identify at least two ethical risks of AI relevant to their business (data privacy, bias, labor displacement)","Articulate how AI adoption could affect their employees, customers, and community","Complete a Personal AI Adoption Roadmap covering tools, timelines, and learning goals","Connect their AI learning journey to a broader vision for business economic resilience"],
+    tools: "Reflection workbook (provided). Optional: revisit tools from Modules 3–5 for roadmap planning.",
+    equity: "Explicit discussion of how AI policy affects immigrant-owned and minority businesses. Policy resources and advocacy pathways shared.",
+    assess: "Personal AI Adoption Roadmap — reviewed in final 1-on-1 coaching session."
+  }
+];
+
+// ── RENDER CHAPTERS ───────────────────────────────────────────────────────
+function renderChapters() {
+  const container = document.getElementById('chapter-list');
+  CHAPTERS.forEach((c, i) => {
+    const outlineItems = c.outline.map((o, oi) =>
+      `<li><span class="o-num">${oi+1}</span><span>${o}</span></li>`
+    ).join('');
+    container.innerHTML += `
+    <div class="ch-card">
+      <button class="ch-trigger" onclick="toggleCh('ch-body-${i}','ch-chev-${i}')">
+        <div class="ch-bar" style="background:${c.color}"></div>
+        <div class="ch-title-block">
+          <div class="ch-eyebrow">${c.num}</div>
+          <div class="ch-name">${c.title}</div>
+          <div class="ch-job">${c.job}</div>
+        </div>
+        <div class="ch-right">
+          <span class="wc-pill" style="background:${c.badge.bg};color:${c.badge.color}">${c.words.toLocaleString()} words</span>
+          <span class="chevron-icon" id="ch-chev-${i}">▾</span>
+        </div>
+      </button>
+      <div class="ch-body" id="ch-body-${i}">
+        <div class="ch-grid">
+          <div class="info-block">
+            <div class="ib-label">Detailed outline</div>
+            <ul class="outline-ol">${outlineItems}</ul>
+          </div>
+          <div class="scaffold-block" style="grid-column:auto;background:${c.badge.bg};border-color:transparent">
+            <div class="scaffold-label" style="color:${c.color}">Scaffolding strategy</div>
+            <p class="scaffold-text" style="color:${c.color === '#5B4FD9' ? '#2A235A' : c.color === '#1A9E75' ? '#0A4A35' : c.color === '#C94F2A' ? '#5A1F10' : c.color === '#B06A10' ? '#4A2A05' : c.color === '#2068B0' ? '#0A3060' : '#4A1028'}">${c.scaffold}</p>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+// ── RENDER WORD COUNT ─────────────────────────────────────────────────────
+function renderWC() {
+  const container = document.getElementById('wc-bars');
+  const max = Math.max(...WC_DATA.map(d => d.words));
+  const total = WC_DATA.reduce((s,d) => s+d.words, 0);
+  WC_DATA.forEach(d => {
+    container.innerHTML += `
+    <div class="wc-row">
+      <span class="wc-label">${d.label}</span>
+      <div class="wc-track"><div class="wc-fill" style="width:${Math.round(d.words/max*100)}%;background:${d.color}"></div></div>
+      <span class="wc-val">${d.words.toLocaleString()}</span>
+    </div>`;
+  });
+  container.innerHTML += `<div class="wc-total">Total: ${total.toLocaleString()} words</div>`;
+}
+
+// ── RENDER CURRICULUM ─────────────────────────────────────────────────────
+function renderCurriculum() {
+  const container = document.getElementById('curriculum-list');
+  CURRICULUM.forEach((m, i) => {
+    const kolbTags = KOLB_ALL.map((k,ki) =>
+      `<span class="tag-pill ${m.kolb.includes(ki)?'on':''}">${k}</span>`).join('');
+    const finkTags = FINK_ALL.map((f,fi) =>
+      `<span class="tag-pill ${m.fink.includes(fi)?'on-teal':''}">${f}</span>`).join('');
+    const delBadges = m.delivery.map(d=>`<span class="del-pill ${d.c}">${d.l}</span>`).join('');
+    const loItems = m.lo.map((l,li)=>
+      `<li><span class="o-num">${li+1}</span><span>${l}</span></li>`).join('');
+
+    container.innerHTML += `
+    <div class="curriculum-card">
+      <button class="cur-trigger" onclick="toggleCh('cur-body-${i}','cur-chev-${i}')">
+        <div class="cur-bar" style="background:${m.color}"></div>
+        <div class="cur-inner">
+          <div class="cur-eyebrow">${m.num} · ${m.phase}</div>
+          <div class="cur-name">${m.name}</div>
+          <div class="cur-tag">${m.tag}</div>
+        </div>
+        <div class="cur-right">
+          <span class="dur-pill" style="background:${m.badge.bg};color:${m.badge.color}">${m.duration}</span>
+          <span class="dur-pill" style="background:#F5F0E8;color:#9A9590;border:1px solid #DDD8D0">${m.format}</span>
+          <span class="chevron-icon" id="cur-chev-${i}">▾</span>
+        </div>
+      </button>
+      <div class="cur-body" id="cur-body-${i}">
+        <div class="cur-grid">
+          <div class="info-block">
+            <div class="ib-label">Learning objectives</div>
+            <ul class="outline-ol">${loItems}</ul>
+          </div>
+          <div>
+            <div class="info-block" style="margin-bottom:0.85rem">
+              <div class="ib-label">Kolb's cycle — stages covered</div>
+              <div class="tag-row">${kolbTags}</div>
+            </div>
+            <div class="info-block" style="margin-bottom:0.85rem">
+              <div class="ib-label">Fink's taxonomy — dimensions addressed</div>
+              <div class="tag-row">${finkTags}</div>
+            </div>
+            <div class="info-block" style="margin-bottom:0.85rem">
+              <div class="ib-label">Delivery modes</div>
+              <div class="del-row">${delBadges}</div>
+            </div>
+            <div class="info-block" style="margin-bottom:0.85rem">
+              <div class="ib-label">Tools & resources</div>
+              <div class="ib-text">${m.tools}</div>
+            </div>
+            <div class="info-block" style="margin-bottom:0.85rem">
+              <div class="ib-label">Equity & accessibility</div>
+              <div class="ib-text">${m.equity}</div>
+            </div>
+            <div class="info-block">
+              <div class="ib-label">Assessment / reflection</div>
+              <div class="ib-text">${m.assess}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function toggleCh(bodyId, chevId) {
+  const body = document.getElementById(bodyId);
+  const chev = document.getElementById(chevId);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderChapters();
+renderWC();
+renderCurriculum();
+</script>
+</body>
+</html>
